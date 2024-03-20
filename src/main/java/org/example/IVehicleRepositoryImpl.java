@@ -16,11 +16,16 @@ public class IVehicleRepositoryImpl implements IVehicleRepository {
         this.vehicles.add(vehicle);
         save();
     }
+
+    public void removeVehicle(int id) {
+        vehicles.removeIf(vehicle -> vehicle.id == id);
+    }
     @Override
     public boolean rentVehicle(int id) {
         for (Vehicle vehicle : vehicles) {
             if (vehicle.id == id && !vehicle.rented) {
                 vehicle.rented = true;
+                save();
                 return true;
             }
         }
@@ -44,7 +49,7 @@ public class IVehicleRepositoryImpl implements IVehicleRepository {
     }
 
     @Override
-    public void load(String filename) {
+    public void load() {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(filename));
             String line;

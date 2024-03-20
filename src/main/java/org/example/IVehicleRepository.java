@@ -7,6 +7,9 @@ public interface IVehicleRepository {
     Vehicle returnVehicle(int id);
     List<Vehicle> getVehicles();
 
+    void addVehicle(Vehicle vehicle);
+    void removeVehicle(int id);
+
     void save();
-    void load(String fileName);
+    void load();
 }
