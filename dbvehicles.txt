@@ -1,1 +1,1 @@
-C;1;Toyota;Camry;2020;25000.00;false;C;2;Honda;Civic;2018;20000.00;true;M;3;Harley-Davidson;Sportster;2021;12000.00;true;Sport;M;4;BMW;S1000RR;2019;18000.00;false;Sport;C;5;KIA;Sportage;2016;20000.00;false;M;6;YAMAHA;R1;2009;8500.00;false;Sport;
+C;2;Honda;Civic;2018;20000.00;false;M;3;Harley-Davidson;Sportster;2021;12000.00;false;Sport;M;4;BMW;S1000RR;2019;18000.00;false;Sport;C;5;KIA;Sportage;2016;20000.00;false;M;6;YAMAHA;R1;2009;8500.00;false;Sport;C;7;Toyota;Camry;2020;25000.00;false;M;8;BMW;S1000RR;2023;34000.00;false;Sport;

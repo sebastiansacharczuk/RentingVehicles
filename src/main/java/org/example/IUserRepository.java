@@ -8,7 +8,7 @@ public interface IUserRepository {
 
     void addUser(User user);
 
-    public void rentVehicle(int userId, int vehicleId);
+    public boolean rentVehicle(int userId, int vehicleId);
     void save();
 
     void load();

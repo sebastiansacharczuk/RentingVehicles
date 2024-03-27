@@ -4,11 +4,11 @@ import java.util.List;
 
 public interface IVehicleRepository {
     boolean rentVehicle(int id);
-    Vehicle returnVehicle(int id);
+    Vehicle getVehicle(int id);
     List<Vehicle> getVehicles();
 
     void addVehicle(Vehicle vehicle);
-    void removeVehicle(int id);
+    boolean removeVehicle(int id);
 
     void save();
     void load();

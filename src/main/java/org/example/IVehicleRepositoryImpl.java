@@ -17,10 +17,17 @@ public class IVehicleRepositoryImpl implements IVehicleRepository {
         save();
     }
 
-    public void removeVehicle(int id) {
-        vehicles.removeIf(vehicle -> vehicle.id == id);
+    public boolean removeVehicle(int id) {
+        for (Vehicle vehicle : vehicles) {
+            if (vehicle.id == id && !vehicle.rented) {
+                vehicles.remove(vehicle);
+                save();
+                return true;
+            }
+        }
+        return false;
     }
-    @Override
+
     public boolean rentVehicle(int id) {
         for (Vehicle vehicle : vehicles) {
             if (vehicle.id == id && !vehicle.rented) {
@@ -32,11 +39,20 @@ public class IVehicleRepositoryImpl implements IVehicleRepository {
         return false;
     }
 
-    @Override
-    public Vehicle returnVehicle(int id) {
+    public boolean returnVehicle(int id) {
         for (Vehicle vehicle : vehicles) {
             if (vehicle.id == id) {
-                vehicle.rented = true;
+                vehicle.rented = false;
+                save();
+                return true;
+            }
+        }
+        return false;
+    }
+    @Override
+    public Vehicle getVehicle(int id) {
+        for (Vehicle vehicle : vehicles) {
+            if (vehicle.id == id) {
                 return vehicle;
             }
         }
@@ -72,7 +88,11 @@ public class IVehicleRepositoryImpl implements IVehicleRepository {
                     }
                 }
             }
-            Vehicle.idGen = vehicles.size()+1;
+            if (vehicles.isEmpty())
+                Vehicle.idGen = 0;
+            else
+                Vehicle.idGen = vehicles.getLast().id + 1;
+
             reader.close();
         } catch (IOException e) {
             e.getMessage();

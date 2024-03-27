@@ -37,14 +37,18 @@ public class IUserRepositoryImpl implements IUserRepository {
     }
 
     @Override
-    public void rentVehicle(int userId, int vehicleId) {
+    public boolean rentVehicle(int userId, int vehicleId) {
         for (User user : users) {
             if (user.id == userId) {
                 user.setRentedId(vehicleId);
+                save();
+                return true;
             }
         }
-        save();
+        return false;
     }
+
+
 
 
     public void load() {
@@ -63,7 +67,11 @@ public class IUserRepositoryImpl implements IUserRepository {
                     }
                 }
             }
-            User.idGen = users.size()+1;
+            if (users.isEmpty())
+                User.idGen = 0;
+            else
+                User.idGen = users.getLast().id + 1;
+
             reader.close();
         } catch (IOException e) {
             e.getMessage();
@@ -84,5 +92,9 @@ public class IUserRepositoryImpl implements IUserRepository {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public String clientProfileInfo(User user) {
+        return String.format("ID: %d\nUsername: %s", user.id, user.getUsername());
     }
 }

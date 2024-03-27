@@ -1,5 +1,6 @@
 package org.example;
 
+import java.security.MessageDigest;
 import java.util.Scanner;
 
 public class Main {
@@ -7,10 +8,19 @@ public class Main {
         Scanner scanner = new Scanner(System.in);
 
         String dbVehicles = "dbvehicles.txt";
-        String dbUsers = "dbUsers.txt";
+        String dbUsers = "dbusers.txt";
 
         IUserRepositoryImpl userRepository = new IUserRepositoryImpl(dbUsers);
         IVehicleRepositoryImpl vehicleRepository = new IVehicleRepositoryImpl(dbVehicles);
+
+
+//        User client1 = new User("client1", hashString("123"), 1);
+//        User client2 = new User("client2", hashString("489"), 1);
+//        User admin1 = new User("admin1", hashString("789"), 0);
+//        userRepository.addUser(client1);
+//        userRepository.addUser(client2);
+//        userRepository.addUser(admin1);
+//        userRepository.save();
 
         userRepository.load();
         vehicleRepository.load();
@@ -27,22 +37,16 @@ public class Main {
 //        iVehicleRepository.addVehicle(motorcycle1);
 //        iVehicleRepository.addVehicle(motorcycle2);
 //
-//        iVehicleRepository.save("dbvehicles.txt");
+//        iVehicleRepository.save();
 
-//        User client1 = new User("client1", "123", 1);
-//        User client2 = new User("client2", "456", 1);
-//        User admin1 = new User("admin1", "789", 0);
-//        userRepository.addUser(client1);
-//        userRepository.addUser(client2);
-//        userRepository.addUser(admin1);
 
 
         User currentUser = signIn(scanner, userRepository);
 
         if (currentUser.getRole() == 0)
-            adminPanel(vehicleRepository, scanner);
+            adminPanel(vehicleRepository, userRepository, scanner);
         else if (currentUser.getRole() == 1)
-            clientPanel(vehicleRepository, scanner);
+            clientPanel(currentUser, vehicleRepository, userRepository, scanner);
 
 
 
@@ -73,18 +77,19 @@ public class Main {
         return currentUser;
     }
 
-    public static void adminPanel(IVehicleRepositoryImpl iVehicleRepositoryImpl, Scanner scanner){
+    public static void adminPanel(IVehicleRepositoryImpl iVehicleRepositoryImpl, IUserRepositoryImpl iUserRepositoryImpl, Scanner scanner){
 
         while (true){
             System.out.print(
                     """
                     ==============================
                     [1] - Display all vehicles
-                    [2] - Add vehicle
-                    [3] - Rent vehicle
-                    [4] - Exit
+                    [2] - Display all users
+                    [3] - Add vehicle
+                    [4] - Remove vehicle
+                    [5] - Exit
                     ==============================
-                    Type [1-4]:\s"""
+                    Type [1-5]:\s"""
             );
             int option1 = scanner.nextInt();
             clearScreen();
@@ -95,6 +100,13 @@ public class Main {
                     }
                     break;
                 case 2:
+                    for (User user : iUserRepositoryImpl.getUsers()) {
+                        System.out.println(iUserRepositoryImpl.clientProfileInfo(user));
+                        // Vehicle rentedVehicle = iVehicleRepositoryImpl.getVehicle(user.getRentedId());
+                        System.out.println("Rented vehicle:\n" + iVehicleRepositoryImpl.getVehicle(user.getRentedId()));
+                    }
+                    break;
+                case 3:
                     System.out.println(
                             """
                             ==============================
@@ -130,20 +142,20 @@ public class Main {
                     clearScreen();
                     System.out.println("Vehicle added successfully!");
                     break;
-                case 3:
+                case 4:
                     boolean available = false;
                     for (Vehicle vehicle : iVehicleRepositoryImpl.getVehicles()) {
                         if (!vehicle.rented) {
                             available = true;
-                            System.out.println(vehicle.toString() + "- ID: " + vehicle.id);
+                            System.out.println(vehicle + "- ID: " + vehicle.id);
                         }
                     }
                     if (available) {
                         System.out.print("Type ID: ");
                         int inputID = scanner.nextInt();
                         clearScreen();
-                        if(iVehicleRepositoryImpl.rentVehicle(inputID)){
-                            System.out.println("Vehicle is rented.");
+                        if(iVehicleRepositoryImpl.removeVehicle(inputID)){
+                            System.out.println("Vehicle is removed.");
                         }
                         else {
                             System.out.println("Invalid ID, try again.");
@@ -151,11 +163,11 @@ public class Main {
                     }
                     else {
                         clearScreen();
-                        System.out.println("No available vehicle to rent, try later.");
+                        System.out.println("No available vehicle to remove, try later.");
                     }
 
                     break;
-                case 4:
+                case 5:
                     clearScreen();
                     System.out.println("Exit.");
                     return;
@@ -167,13 +179,13 @@ public class Main {
         }
     }
 
-    public static void clientPanel(IVehicleRepositoryImpl iVehicleRepositoryImpl, Scanner scanner){
+    public static void clientPanel(User user, IVehicleRepositoryImpl iVehicleRepositoryImpl, IUserRepositoryImpl iUserRepository, Scanner scanner){
         while (true){
             System.out.print(
                     """
                     ==============================
-                    [1] - Display all vehicles
-                    [2] - Add vehicle
+                    [1] - Your Profile info
+                    [2] - Return vehicle
                     [3] - Rent vehicle
                     [4] - Exit
                     ==============================
@@ -183,59 +195,41 @@ public class Main {
             clearScreen();
             switch (option1) {
                 case 1:
-                    for (Vehicle vehicle : iVehicleRepositoryImpl.getVehicles()) {
-                        System.out.println(vehicle.toString());
-                    }
+                    System.out.println(iUserRepository.clientProfileInfo(user));
+                    // Vehicle rentedVehicle = iVehicleRepositoryImpl.getVehicle(user.getRentedId());
+                    System.out.println("Rented vehicle:\n" + iVehicleRepositoryImpl.getVehicle(user.getRentedId()));
                     break;
                 case 2:
-                    System.out.println(
-                            """
-                            ==============================
-                            [1] - Add car
-                            [2] - Add motorcycle
-                            ==============================
-                            Type [1-2]:\s"""
-                    );
-                    int option2 = scanner.nextInt();
-                    scanner.nextLine();
-                    clearScreen();
-                    String brand, model, category;
-                    int year;
-                    double price;
-
-                    System.out.print("Brand: ");
-                    brand = scanner.nextLine();
-                    System.out.print("Model: ");
-                    model = scanner.nextLine();
-                    System.out.print("Year: ");
-                    year = scanner.nextInt();
-                    System.out.print("Price: ");
-                    price = scanner.nextDouble();
-                    scanner.nextLine();
-
-                    if (option2 == 1) {
-                        iVehicleRepositoryImpl.addVehicle(new Car(brand, model, year, price, false));
-                    } else if (option2 == 2) {
-                        System.out.print("Category: ");
-                        category = scanner.nextLine();
-                        iVehicleRepositoryImpl.addVehicle(new Motorcycle(brand, model, year, price, false, category));
+                    if(user.getRentedId() == -1) {
+                        clearScreen();
+                        System.out.println("You don't rent any vehicle at the moment.");
+                        break;
                     }
-                    clearScreen();
-                    System.out.println("Vehicle added successfully!");
+                    if (iVehicleRepositoryImpl.returnVehicle(user.getRentedId()) && iUserRepository.rentVehicle(user.id, -1)){
+                        clearScreen();
+                        System.out.println("Vehicle returned.");
+                    }
+
                     break;
                 case 3:
+                    if (user.getRentedId() != -1) {
+                        clearScreen();
+                        System.out.println("You have already rented a vehicle");
+                        break;
+                    }
+
                     boolean available = false;
                     for (Vehicle vehicle : iVehicleRepositoryImpl.getVehicles()) {
                         if (!vehicle.rented) {
                             available = true;
-                            System.out.println(vehicle.toString() + "- ID: " + vehicle.id);
+                            System.out.println(vehicle + "- ID: " + vehicle.id);
                         }
                     }
                     if (available) {
                         System.out.print("Type ID: ");
                         int inputID = scanner.nextInt();
                         clearScreen();
-                        if(iVehicleRepositoryImpl.rentVehicle(inputID)){
+                        if(iVehicleRepositoryImpl.rentVehicle(inputID) && iUserRepository.rentVehicle(user.id, inputID)){
                             System.out.println("Vehicle is rented.");
                         }
                         else {
@@ -259,4 +253,6 @@ public class Main {
             }
         }
     }
+
+
 }

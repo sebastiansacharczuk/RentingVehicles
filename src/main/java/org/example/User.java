@@ -40,10 +40,19 @@ public class User {
 
     protected static int idGen = 1;
 
+    public int getRentedId() {
+        return rentedId;
+    }
 
     public String toCSV() {
         return String.format("%d;%s;%s;%d;%d;", id, username, password, role, rentedId);
     }
+
+    @Override
+    public String toString() {
+        return String.format("id:%d username:%s password:%s role:%d rentedId:%d;", id, username, password, role, rentedId);
+    }
+
 
     public void setRentedId(int rentedId) {
         this.rentedId = rentedId;
