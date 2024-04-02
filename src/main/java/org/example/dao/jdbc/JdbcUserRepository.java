@@ -1,16 +1,18 @@
-package org.example;
+package org.example.dao.jdbc;
+
+import org.example.dao.IUserRepository;
+import org.example.model.User;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
-public class IUserRepositoryImpl implements IUserRepository {
+public class JdbcUserRepository implements IUserRepository {
     private List<User> users;
     private final String filename;
 
 
-    public IUserRepositoryImpl(String filename) {
+    public JdbcUserRepository(String filename) {
         this.filename = filename;
         this.users = new ArrayList<>();
     }

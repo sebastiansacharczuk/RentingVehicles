@@ -1,4 +1,4 @@
-package org.example;
+package org.example.model;
 
 import java.lang.reflect.Array;
 import java.util.List;
@@ -32,13 +32,13 @@ public class User {
 
 
 
-    protected int id;
+    public int id;
     private String username;
     private String password;
     private int role;
     private int rentedId = -1;
 
-    protected static int idGen = 1;
+    public static int idGen = 1;
 
     public int getRentedId() {
         return rentedId;

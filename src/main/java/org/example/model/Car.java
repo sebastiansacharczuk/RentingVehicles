@@ -1,6 +1,6 @@
-package org.example;
+package org.example.model;
 
-public class Car extends Vehicle{
+public class Car extends Vehicle {
     public Car(String brand, String model, int year, double price, boolean rented) {
         super(brand, model, year, price, rented);
     }

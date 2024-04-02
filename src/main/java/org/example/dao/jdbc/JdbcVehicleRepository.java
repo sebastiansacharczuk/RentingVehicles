@@ -1,14 +1,19 @@
-package org.example;
+package org.example.dao.jdbc;
+
+import org.example.dao.IVehicleRepository;
+import org.example.model.Car;
+import org.example.model.Motorcycle;
+import org.example.model.Vehicle;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class IVehicleRepositoryImpl implements IVehicleRepository {
+public class JdbcVehicleRepository implements IVehicleRepository {
     private List<Vehicle> vehicles;
     private final String filename;
-    public IVehicleRepositoryImpl(String filename) {
+    public JdbcVehicleRepository(String filename) {
         this.vehicles = new ArrayList<>();
         this.filename = filename;
     }

@@ -1,14 +1,14 @@
-package org.example;
+package org.example.model;
 
 public abstract class Vehicle {
     protected String brand;
     protected String model;
     protected int year;
     protected double price;
-    protected boolean rented;
+    public boolean rented;
 
-    protected int id;
-    protected static int idGen = 1;
+    public int id;
+    public static int idGen = 1;
 
 
     public Vehicle(String brand, String model, int year, double price, boolean rented) {

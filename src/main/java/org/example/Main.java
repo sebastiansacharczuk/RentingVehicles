@@ -1,6 +1,13 @@
 package org.example;
 
-import java.security.MessageDigest;
+import org.example.authenticate.Authenticator;
+import org.example.dao.jdbc.JdbcUserRepository;
+import org.example.dao.jdbc.JdbcVehicleRepository;
+import org.example.model.Car;
+import org.example.model.Motorcycle;
+import org.example.model.User;
+import org.example.model.Vehicle;
+
 import java.util.Scanner;
 
 public class Main {
@@ -10,8 +17,8 @@ public class Main {
         String dbVehicles = "dbvehicles.txt";
         String dbUsers = "dbusers.txt";
 
-        IUserRepositoryImpl userRepository = new IUserRepositoryImpl(dbUsers);
-        IVehicleRepositoryImpl vehicleRepository = new IVehicleRepositoryImpl(dbVehicles);
+        JdbcUserRepository userRepository = new JdbcUserRepository(dbUsers);
+        JdbcVehicleRepository vehicleRepository = new JdbcVehicleRepository(dbVehicles);
 
 
 //        User client1 = new User("client1", hashString("123"), 1);
@@ -56,7 +63,7 @@ public class Main {
         System.out.println("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
     }
 
-    public static User signIn(Scanner scanner, IUserRepositoryImpl userRepository) {
+    public static User signIn(Scanner scanner, JdbcUserRepository userRepository) {
         String username = "";
         String password = "";
         User currentUser = null;
@@ -77,7 +84,7 @@ public class Main {
         return currentUser;
     }
 
-    public static void adminPanel(IVehicleRepositoryImpl iVehicleRepositoryImpl, IUserRepositoryImpl iUserRepositoryImpl, Scanner scanner){
+    public static void adminPanel(JdbcVehicleRepository jdbcVehicleRepository, JdbcUserRepository jdbcUserRepository, Scanner scanner){
 
         while (true){
             System.out.print(
@@ -95,15 +102,15 @@ public class Main {
             clearScreen();
             switch (option1) {
                 case 1:
-                    for (Vehicle vehicle : iVehicleRepositoryImpl.getVehicles()) {
+                    for (Vehicle vehicle : jdbcVehicleRepository.getVehicles()) {
                         System.out.println(vehicle.toString());
                     }
                     break;
                 case 2:
-                    for (User user : iUserRepositoryImpl.getUsers()) {
-                        System.out.println(iUserRepositoryImpl.clientProfileInfo(user));
+                    for (User user : jdbcUserRepository.getUsers()) {
+                        System.out.println(jdbcUserRepository.clientProfileInfo(user));
                         // Vehicle rentedVehicle = iVehicleRepositoryImpl.getVehicle(user.getRentedId());
-                        System.out.println("Rented vehicle:\n" + iVehicleRepositoryImpl.getVehicle(user.getRentedId()));
+                        System.out.println("Rented vehicle:\n" + jdbcVehicleRepository.getVehicle(user.getRentedId()));
                     }
                     break;
                 case 3:
@@ -133,18 +140,18 @@ public class Main {
                     scanner.nextLine();
 
                     if (option2 == 1) {
-                        iVehicleRepositoryImpl.addVehicle(new Car(brand, model, year, price, false));
+                        jdbcVehicleRepository.addVehicle(new Car(brand, model, year, price, false));
                     } else if (option2 == 2) {
                         System.out.print("Category: ");
                         category = scanner.nextLine();
-                        iVehicleRepositoryImpl.addVehicle(new Motorcycle(brand, model, year, price, false, category));
+                        jdbcVehicleRepository.addVehicle(new Motorcycle(brand, model, year, price, false, category));
                     }
                     clearScreen();
                     System.out.println("Vehicle added successfully!");
                     break;
                 case 4:
                     boolean available = false;
-                    for (Vehicle vehicle : iVehicleRepositoryImpl.getVehicles()) {
+                    for (Vehicle vehicle : jdbcVehicleRepository.getVehicles()) {
                         if (!vehicle.rented) {
                             available = true;
                             System.out.println(vehicle + "- ID: " + vehicle.id);
@@ -154,7 +161,7 @@ public class Main {
                         System.out.print("Type ID: ");
                         int inputID = scanner.nextInt();
                         clearScreen();
-                        if(iVehicleRepositoryImpl.removeVehicle(inputID)){
+                        if(jdbcVehicleRepository.removeVehicle(inputID)){
                             System.out.println("Vehicle is removed.");
                         }
                         else {
@@ -179,7 +186,7 @@ public class Main {
         }
     }
 
-    public static void clientPanel(User user, IVehicleRepositoryImpl iVehicleRepositoryImpl, IUserRepositoryImpl iUserRepository, Scanner scanner){
+    public static void clientPanel(User user, JdbcVehicleRepository jdbcVehicleRepository, JdbcUserRepository iUserRepository, Scanner scanner){
         while (true){
             System.out.print(
                     """
@@ -197,7 +204,7 @@ public class Main {
                 case 1:
                     System.out.println(iUserRepository.clientProfileInfo(user));
                     // Vehicle rentedVehicle = iVehicleRepositoryImpl.getVehicle(user.getRentedId());
-                    System.out.println("Rented vehicle:\n" + iVehicleRepositoryImpl.getVehicle(user.getRentedId()));
+                    System.out.println("Rented vehicle:\n" + jdbcVehicleRepository.getVehicle(user.getRentedId()));
                     break;
                 case 2:
                     if(user.getRentedId() == -1) {
@@ -205,7 +212,7 @@ public class Main {
                         System.out.println("You don't rent any vehicle at the moment.");
                         break;
                     }
-                    if (iVehicleRepositoryImpl.returnVehicle(user.getRentedId()) && iUserRepository.rentVehicle(user.id, -1)){
+                    if (jdbcVehicleRepository.returnVehicle(user.getRentedId()) && iUserRepository.rentVehicle(user.id, -1)){
                         clearScreen();
                         System.out.println("Vehicle returned.");
                     }
@@ -219,7 +226,7 @@ public class Main {
                     }
 
                     boolean available = false;
-                    for (Vehicle vehicle : iVehicleRepositoryImpl.getVehicles()) {
+                    for (Vehicle vehicle : jdbcVehicleRepository.getVehicles()) {
                         if (!vehicle.rented) {
                             available = true;
                             System.out.println(vehicle + "- ID: " + vehicle.id);
@@ -229,7 +236,7 @@ public class Main {
                         System.out.print("Type ID: ");
                         int inputID = scanner.nextInt();
                         clearScreen();
-                        if(iVehicleRepositoryImpl.rentVehicle(inputID) && iUserRepository.rentVehicle(user.id, inputID)){
+                        if(jdbcVehicleRepository.rentVehicle(inputID) && iUserRepository.rentVehicle(user.id, inputID)){
                             System.out.println("Vehicle is rented.");
                         }
                         else {

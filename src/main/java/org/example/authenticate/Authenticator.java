@@ -1,10 +1,13 @@
-package org.example;
+package org.example.authenticate;
+
+import org.example.dao.jdbc.JdbcUserRepository;
+import org.example.model.User;
 
 import java.security.MessageDigest;
 import java.util.Objects;
 
 public class Authenticator {
-    static User checkpass(String username, String password, IUserRepositoryImpl userRepository) {
+    public static User checkpass(String username, String password, JdbcUserRepository userRepository) {
         String encoded = hashString(password);
         for (User user : userRepository.getUsers()) {
             if (Objects.equals(user.getUsername(), username) && Objects.equals(user.getPassword(), encoded)) {

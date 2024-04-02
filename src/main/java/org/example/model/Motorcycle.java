@@ -1,6 +1,6 @@
-package org.example;
+package org.example.model;
 
-public class Motorcycle extends Vehicle{
+public class Motorcycle extends Vehicle {
 
     private final String category;
 
