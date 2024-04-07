@@ -1,60 +1,62 @@
 package org.example.model;
 
-import java.lang.reflect.Array;
-import java.util.List;
-
 public class User {
-    public String getUsername() {
-        return username;
+    private String login;
+    private String password;
+    private Role role;
+    private String rentedPlate;
+
+    public User(String login, String password, Role role, String rentedPlate) {
+        this.login = login;
+        this.password = password;
+        this.role = role;
+        this.rentedPlate = rentedPlate;
     }
 
-    public int getRole() {
-        return role;
+    public String getLogin() {
+        return login;
+    }
+
+    public void setLogin(String login) {
+        this.login = login;
     }
 
     public String getPassword() {
         return password;
     }
 
-    public User(String username, String password, int role) {
-        this.username = username;
+    public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
         this.role = role;
-        id = idGen++;
     }
 
-    public User(int id, String username, String password, int role) {
-        this.username = username;
-        this.password = password;
-        this.role = role;
-        this.id = id;
+    public String getRentedPlate() {
+        return rentedPlate;
     }
 
-
-
-    public int id;
-    private String username;
-    private String password;
-    private int role;
-    private int rentedId = -1;
-
-    public static int idGen = 1;
-
-    public int getRentedId() {
-        return rentedId;
+    public void setRentedPlate(String rentedPlate) {
+        this.rentedPlate = rentedPlate;
     }
 
-    public String toCSV() {
-        return String.format("%d;%s;%s;%d;%d;", id, username, password, role, rentedId);
-    }
 
     @Override
     public String toString() {
-        return String.format("id:%d username:%s password:%s role:%d rentedId:%d;", id, username, password, role, rentedId);
+        return "User{" +
+                "login:'" + login + '\'' +
+                ", password:'" + password + '\'' +
+                ", role:'" + role + '\'' +
+                ", rentedPlate:" + rentedPlate +
+                '}';
     }
 
-
-    public void setRentedId(int rentedId) {
-        this.rentedId = rentedId;
+    public enum Role {
+        USER,ADMIN;
     }
 }

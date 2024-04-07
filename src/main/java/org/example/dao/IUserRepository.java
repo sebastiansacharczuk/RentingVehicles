@@ -2,16 +2,14 @@ package org.example.dao;
 
 import org.example.model.User;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface IUserRepository {
-    User getUser(int id);
-    List<User> getUsers();
+    User getUser(String username);
+    Collection<User> getUsers();
 
     void addUser(User user);
+    void removeUser(String login);
 
-    public boolean rentVehicle(int userId, int vehicleId);
-    void save();
-
-    void load();
 }

@@ -2,16 +2,18 @@ package org.example.dao;
 
 import org.example.model.Vehicle;
 
+import java.util.Collection;
 import java.util.List;
 
 public interface IVehicleRepository {
-    boolean rentVehicle(int id);
-    Vehicle getVehicle(int id);
-    List<Vehicle> getVehicles();
 
-    void addVehicle(Vehicle vehicle);
-    boolean removeVehicle(int id);
+    Collection<Vehicle> getVehicles();
+    Vehicle getVehicle(String plate);
 
-    void save();
-    void load();
+    boolean addVehicle(Vehicle vehicle);
+    boolean removeVehicle(String plate);
+
+    boolean rentVehicle(String plate,String login);
+    boolean returnVehicle(String plate,String login );
+
 }
