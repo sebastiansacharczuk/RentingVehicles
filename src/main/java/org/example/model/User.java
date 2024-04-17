@@ -1,16 +1,34 @@
 package org.example.model;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "tuser")
 public class User {
+    @Id
     private String login;
     private String password;
+    @Enumerated(EnumType.STRING)
     private Role role;
-    private String rentedPlate;
 
-    public User(String login, String password, Role role, String rentedPlate) {
+    @OneToOne(fetch = FetchType.EAGER) //default
+    @JoinColumn(name = "rentedPlate", referencedColumnName = "plate")
+    private Vehicle vehicle;
+
+    public User(String login, String password, Role role, Vehicle vehicle) {
         this.login = login;
         this.password = password;
         this.role = role;
-        this.rentedPlate = rentedPlate;
+        this.vehicle = vehicle;
+    }
+
+    public User(String login, String password) {
+        this.login = login;
+        this.password = password;
+        this.role = Role.USER;
+    }
+
+    public User() {
     }
 
     public String getLogin() {
@@ -37,23 +55,35 @@ public class User {
         this.role = role;
     }
 
-    public String getRentedPlate() {
-        return rentedPlate;
+    public Vehicle getVehicle() {
+        return vehicle;
     }
 
-    public void setRentedPlate(String rentedPlate) {
-        this.rentedPlate = rentedPlate;
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
-
 
     @Override
     public String toString() {
         return "User{" +
-                "login:'" + login + '\'' +
-                ", password:'" + password + '\'' +
-                ", role:'" + role + '\'' +
-                ", rentedPlate:" + rentedPlate +
+                "login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                ", role='" + role + '\'' +
+                ", vehicle=" + vehicle +
                 '}';
+    }
+
+    public String toCSV() {
+        return new StringBuilder()
+                .append(this.getClass().getSimpleName())
+                .append(";")
+                .append(this.login)
+                .append(";")
+                .append(this.password)
+                .append(";")
+                .append(this.role)
+                .append(this.vehicle)
+                .toString();
     }
 
     public enum Role {
