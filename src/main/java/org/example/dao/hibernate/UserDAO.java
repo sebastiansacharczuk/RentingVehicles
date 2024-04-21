@@ -5,16 +5,25 @@ import org.example.model.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import java.util.Collection;
 
+@Repository
 public class UserDAO implements IUserRepository {
     private static UserDAO instance;
+
     SessionFactory sessionFactory;
+
+    @Autowired
+    private UserDAO(SessionFactory sessionFactory) {
+        this.sessionFactory = sessionFactory;
+    }
     @Override
     public User getUser(String login) {
         Session session = sessionFactory.openSession();
-        User user;
+        User user = null;
         Transaction transaction = null;
         try {
             transaction = session.beginTransaction();
@@ -22,30 +31,31 @@ public class UserDAO implements IUserRepository {
             transaction.commit();
         } catch (RuntimeException e) {
             if (transaction != null) transaction.rollback();
-            throw e;
-        } finally {
-            session.close();
-        }
-
-        return user;
-    }
-
-    @Override
-    public void addUser(User user) {
-        Session session = sessionFactory.openSession();
-        Transaction transaction = null;
-        try {
-            transaction = session.beginTransaction();
-            session.persist(user);
-            transaction.commit();
-        } catch (RuntimeException e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
             e.printStackTrace();
         } finally {
             session.close();
         }
+        return user;
+    }
+
+    @Override
+    public boolean addUser(User user) {
+            Session session = sessionFactory.openSession();
+            Transaction transaction = null;
+            try {
+                transaction = session.beginTransaction();
+                session.persist(user);
+                transaction.commit();
+                return true;
+            } catch (RuntimeException e) {
+                if (transaction != null) {
+                    transaction.rollback();
+                }
+                e.printStackTrace();
+            } finally {
+                session.close();
+            }
+        return false;
     }
 
     @Override
@@ -85,10 +95,6 @@ public class UserDAO implements IUserRepository {
             session.close();
         }
         return users;
-    }
-
-    private UserDAO(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
     }
     public static UserDAO getInstance(SessionFactory sessionFactory) {
         if (instance == null) {

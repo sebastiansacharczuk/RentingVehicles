@@ -1,10 +1,11 @@
 package org.example;
 
+
 import jakarta.persistence.AttributeConverter;
 import jakarta.persistence.Converter;
 
-@Converter(autoApply = true)//not for Hibernate Native
-public class BooleanToShortConverter implements AttributeConverter<Boolean, Short> {
+@Converter(autoApply = true)
+public class BooleanToShortConventer implements AttributeConverter<Boolean, Short> {
     @Override
     public Short convertToDatabaseColumn(Boolean attribute) {
         if (attribute == null) {
@@ -14,7 +15,6 @@ public class BooleanToShortConverter implements AttributeConverter<Boolean, Shor
     }
     @Override
     public Boolean convertToEntityAttribute(Short value) {
-
-        return value != 0;
+        return value != null && value == 1;
     }
 }

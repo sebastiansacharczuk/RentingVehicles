@@ -14,4 +14,3 @@ public class Car extends Vehicle {
         //IT IS MANDATORY!!
     }
 }
-

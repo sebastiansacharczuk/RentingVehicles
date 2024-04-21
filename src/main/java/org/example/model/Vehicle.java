@@ -1,24 +1,21 @@
 package org.example.model;
 
 import jakarta.persistence.*;
-import org.example.BooleanToShortConverter;
+import org.example.BooleanToShortConventer;
 
 @Entity
 @Table(name = "tvehicle")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "vehicle_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class Vehicle {
-
     private String brand;
-
     private String model;
-
     private int year;
     @Column(columnDefinition = "numeric")
     private double price;
     @Id
     private String plate;
-    @Convert(converter = BooleanToShortConverter.class)
+    @Convert(converter = BooleanToShortConventer.class)
     private boolean rent;
     @OneToOne(mappedBy = "vehicle", fetch = FetchType.EAGER)
     private User user;
@@ -30,7 +27,7 @@ public abstract class Vehicle {
         this.price = price;
         this.plate = plate;
         this.rent = false;
-        //this.user = null; //redundant
+        this.user = null; //redundant
 
     }
     public Vehicle(String brand, String model, int year, double price, String plate,boolean rent) {
@@ -94,7 +91,7 @@ public abstract class Vehicle {
         this.plate = plate;
     }
 
-    public boolean getRent() {
+    public boolean isRent() {
         return rent;
     }
 
@@ -108,6 +105,19 @@ public abstract class Vehicle {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public String getUserLogin(){
+        if (user != null)
+            return user.getLogin();
+        else
+            return null;
+    }
+    public User.Role getUserRole(){
+        if (user != null)
+            return user.getRole();
+        else
+            return null;
     }
 
     public String toCSV() {
